@@ -1,0 +1,101 @@
+<% include ./head %>
+<div class="content">
+	<div class="container-fluid">
+		<div class="row">
+                        <div class="col-lg-12 col-md-12">
+                            <div class="card">
+                                <div class="card-header" data-background-color="orange">
+                                    <h4 class="title">All Vehicles</h4>
+                                    <!-- <p class="category">New employees on 15th September, 2016</p> -->
+                                </div>
+                                <div class="card-content table-responsive">
+                                    <table class="table table-hover">
+                                        <thead class="text-warning">
+                                            <th>Detrack Id</th>
+                                            <th>Name</th>
+                                            <th>Mobile No</th>
+                                            <th>Detrack Status</th>
+                                            <th>Assign Types</th>
+                                            <th>Color</th>
+                                        </thead>
+                                        <tbody>
+                                        <% vehicles.forEach(function(vehicle) { %>
+                                            <tr>
+                                                <td><%= vehicle.detrack_id %></td>
+                                                <td><%= vehicle.name %></td>
+                                                <td><%= vehicle.mobile_no %></td>
+                                                <td><%= vehicle.status %></td>
+                                                <td><form action="/admin/saveVehicle" method="post" id="save_type">
+                                                <input type="hidden" name="veh_name" id="veh_name" value="<%= vehicle.name %>">
+                                                <input type="hidden" name="lat" id="lat" value="<%= vehicle.lat %>">
+                                                <input type="hidden" name="lng" id="lng" value="<%= vehicle.lng %>">
+                                                 <input type="hidden" name="status" value="<%= vehicle.status %>">
+                                                <select data-id="<%= vehicle.name %>" class="form-control san_status" name="type_id">
+                                                  <option value = "" disabled selected>Select Type</option>
+                                                  <% types.forEach(function(type) { %>
+                                                  <option <%if (type.select == vehicle.name) { %>selected="selected"<% } %> value = "<%= type.id %>"><%= type.type_name %></option>
+                                                  <% }); %>
+                                               </select></form></td>
+                                               <td><select data-id="<%= vehicle.name %>" class="form-control san_color" name="type_id">
+                                               <option value = "" disabled selected>Select Color</option>
+                                               <% colors.forEach(function(key) { %>
+                                               <option <%if (key == vehicle.color) { %>selected="selected"<% } %> value = "<%= key %>"><%= key %></option>
+                                               <% }) %>
+                                               </select></td>
+                                            </tr>
+    <% }); %>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+	</div>
+</div>
+<% include ./footer %>
+<script>
+  $(document).ready(function() {
+        $('.timepicker').timepicker({
+            showInputs: true
+        });
+        $( ".click_to_avl" ).on( "click", function() {
+            var val = $(this).attr('uib-btn-radio');
+            if (val =='Yes') {
+                $('#san_avl_btns').show();
+            }else if (val =='No') {
+                $('#san_avl_btns').hide();
+            }
+        });
+        var avaialable_days = [];
+        $( ".day_type" ).on( "click", function() {
+            console.log($( this ).text());
+            var found = $.inArray($( this ).text(), avaialable_days);
+            if (found < 0) {
+                avaialable_days.push($( this ).text());
+            }else{
+                avaialable_days.splice(found, 1);
+            }
+          $("#available_data").val(JSON.stringify(avaialable_days));
+        });
+
+        $( ".san_status" ).on( "change", function() { 
+            $(this).closest('form').submit();
+            console.log($('#save_type'));
+        });
+
+        $( ".san_color" ).on( "change", function() { 
+            var veh_name = $(this).data('id');
+            var coloname = $(this).val();
+            $.ajax({
+                type:'POST',
+                url:'./save_color',
+                data: { veh_name:veh_name,color:coloname },
+                dataType:'json'
+            }).done(function(data){
+                //window.location.href="./vehicles";
+            }).fail(function(jqXHR,textStatus, err){
+                console.log(textStatus);
+            });
+        });
+  });
+  </script>

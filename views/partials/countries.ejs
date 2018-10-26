@@ -1,0 +1,72 @@
+<% include ./head %>
+<!-- Modal -->
+<div id="cntry_model" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Add Country</h4>
+      </div>
+      <div class="modal-body">
+        <form action="/admin/add_cntry" method="post">
+              <select class="form-control selectpicker" name="cntry_name">
+            <% countrieslist.forEach(function(countrieslist) { %>
+                                                    <option value="<%= countrieslist %>"><%= countrieslist %></option>
+                                                    <% }); %>
+                                                  </select>
+            <select class="form-control selectpicker" name="timezone">
+            <% timezones.forEach(function(timezones) { %>
+                                                    <option value="<%= timezones %>"><%= timezones %></option>
+                                                    <% }); %>
+                                                  </select>
+            <button type="submit" class="btn btn-primary pull-left">Save</button>                               
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+            <div class="content">
+                <div class="container-fluid">
+                    <div class="row">
+
+                        <div class="col-md-12">
+                            <div class="card card-plain">
+                                <div class="card-header" data-background-color="purple">
+                                    <h4 class="title">Countries</h4>
+                                    <p class="category"><div style="float:right;margin-top: -49px;"><button type="submit" data-toggle="modal" data-target="#cntry_model" class="btn btn-info btn-lg">Add Country</button></div></p>
+                                </div>
+                                <div class="card-content table-responsive">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <th>Name</th>
+                                            <th>Timezone</th>
+                                            <th>Actions</th>
+                                        </thead>
+                                        <tbody>
+                                        <% countries.forEach(function(countries) { %>
+                                            <tr>
+                                                <td><%= countries.name %></td>
+                                                <td><%= countries.timezone %></td>
+                                                <td>
+                                                <form action="/admin/delete_cntry" method="post">
+                                                    <input type="hidden" name="cntry_id" value="<%= countries._id %>">
+                                                    <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                                                    </td>
+                                                    </form></td>
+                                            </tr>
+                                           <% }); %>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+           <% include ./footer %>

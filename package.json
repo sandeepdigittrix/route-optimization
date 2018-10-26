@@ -1,0 +1,60 @@
+{
+  "name": "Route-Optimization",
+  "version": "1.0.0",
+  "description": "includes all functionality of Route Optimization ",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo\"Error:no test specified\" && exit 1",
+    "start": "EXPRESS_PORT=2200 nodemon server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "\\"
+  },
+  "keywords": [
+    "vantage",
+    "api"
+  ],
+  "author": "Sandeep Bangarh",
+  "license": "",
+  "devDependencies": {
+    "nodemon": "^1.14.12"
+  },
+  "dependencies": {
+    "archiver": "^2.1.1",
+    "bcryptjs": "^2.4.3",
+    "bluebird": "^3.5.1",
+    "body-parser": "^1.18.2",
+    "check-types": "^7.4.0",
+    "countries-cities": "0.0.11",
+    "csvdata": "^1.7.0",
+    "ejs": "^2.5.8",
+    "export-csv": "^1.0.1",
+    "export-to-csv": "^0.1.1",
+    "express": "^4.16.2",
+    "express-session": "^1.15.6",
+    "formidable": "^1.1.1",
+    "fs": "0.0.1-security",
+    "geo-nearby": "^2.0.1",
+    "geodist": "^0.2.1",
+    "http": "0.0.0",
+    "js-alert": "^1.0.4",
+    "jsonwebtoken": "^8.1.1",
+    "moment": "^2.22.2",
+    "mssql": "^4.1.0",
+    "multer": "^1.3.0",
+    "node-cron": "^1.2.1",
+    "node-geocoder": "^3.22.0",
+    "node-rest-client": "^3.1.0",
+    "nodemailer": "^4.4.2",
+    "open": "0.0.5",
+    "path": "^0.12.7",
+    "request": "^2.85.0",
+    "socket.io": "^2.0.4",
+    "tedious": "^2.3.1",
+    "underscore": "^1.9.1",
+    "uniqid": "^5.0.3",
+    "waitress": "^0.1.5",
+    "xlsx": "^0.12.8"
+  }
+}

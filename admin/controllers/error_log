@@ -1,0 +1,2 @@
+[28-Jun-2018 07:48:18 America/Chicago] PHP Fatal error:  Call to undefined function mssql_connect() in /home/work4brands/public_html/route-opt/admin/controllers/invent.php on line 6
+[28-Jun-2018 07:50:23 America/Chicago] PHP Fatal error:  Call to undefined function sqlsrv_connect() in /home/work4brands/public_html/route-opt/admin/controllers/invent.php on line 8

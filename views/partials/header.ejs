@@ -1,0 +1,549 @@
+<style>
+      /* Always set the map height explicitly to define the size of the div
+       * element that contains the map. */
+      #map {
+            width: 100%;
+            overflow: hidden;
+            height: 762px;
+            margin: -16px 0 0 0;
+            max-width: 1763px !important;
+        }
+      #floating-panel {
+        position: absolute;
+        top: 10px;
+        left: 25%;
+        z-index: 5;
+        background-color: #fff;
+        padding: 5px;
+        border: 1px solid #999;
+        text-align: center;
+        font-family: 'Roboto','sans-serif';
+        line-height: 30px;
+        padding-left: 10px;
+      }
+      #warnings-panel {
+        width: 100%;
+        height:10%;
+        text-align: center;
+      }
+    </style>
+<input type="hidden" id="address_arr" value="<%=address_arr%>">
+
+<div id="san_modellll" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Alert</h4>
+      </div>
+      <div class="modal-body">
+        <p>Vehicle Not Available At The Moment!</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div id="san_export" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Export</h4>
+      </div>
+      <div class="modal-body">
+        <p>Order Data Exported!</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+    <div class="content">
+                <div class="container-fluid">
+                    <div class="row">
+                    <div class="col-lg-12 col-md-12">
+                    <input type="hidden" id="send_btn" value="<%=display_send_btn %>">
+                                <div class="card-header" data-background-color="orange">
+                                    <h4 class="title">Orders</h4><div id="assign_div"><form action="/admin/assign_vehicle" class="assn_veh_id" id="assign" method="get">
+                                    <input type="hidden" value="" name="order_ids" class="order_ids">
+                                    <div style="float:right;margin-top: -54px;"><button type="submit" class="btn btn-info btn-lg" id="assign_vehicles">Assign Vehicles</button></div></form></div>
+                                    <div class="send_divv">
+                                    <form action="/admin/send_orders" class="assn_veh_id" id="send" method="get">
+                                    <input type="hidden" value="" name="order_ids" class="order_ids">
+                                    <div style="float:right;margin-top: -54px;"><button type="submit" class="btn btn-info btn-lg" id="assign_vehicles">Transfer To Detrack</button></div></form></div>
+                                    <div class="send_divv">
+                                    <form action="/admin/clear_all_assigns" id="clear" method="get">
+                                    <div style="float:right;margin-top: -54px;"><button type="submit" class="btn btn-info btn-lg">Clear Assigns</button></div></form></div>
+                                    <div class="send_divv">
+                                    <form action="/admin/export_ro_csv" id="export_to_csv" method="get">
+                                    <input type="hidden" value="" name="order_ids" class="order_ids">
+                                    <div style="float:right;margin-top: -54px;"><button type="submit" class="btn btn-info btn-lg">Export</button></div></form></div>
+                                    <!-- <p class="category">New employees on 15th September, 2016</p> -->
+                                </div>
+                            <div class="card card-nav-tabs">
+                                <div class="card-header" data-background-color="purple">
+                                    <div class="nav-tabs-navigation">
+                                        <div class="nav-tabs-wrapper">
+                                            <span class="nav-tabs-title">Orders:</span>
+                                            <ul class="nav nav-tabs" data-tabs="tabs">
+                                            <li>Select All
+                                                    <input type="checkbox" id="san_select_all">
+                                                </li>
+                                                <li class="active">
+                                                    <a href="#profile" data-toggle="tab">
+                                                        <i class="material-icons">bookmark_border</i> Tomorrow's Order
+                                                        <div class="ripple-container"></div>
+                                                    </a>
+                                                </li>
+                                                <li class="">
+                                                    <a href="#settings" data-toggle="tab">
+                                                        <i class="material-icons">reorder</i> Coming Orders
+                                                        <div class="ripple-container"></div>
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card-content">
+                                    <div class="tab-content" style="height: 500px;overflow: auto;">
+                                        <div class="tab-pane active" id="profile">
+                                            <table class="table">
+                                            <thead class="text-warning">
+                                            <th>Select<br><input type="checkbox" class="san_select_all"></th>
+                                            <th>Order Id</th>
+                                            <th>Date</th>
+                                            <th>Customer Name</th>
+                                            <th>Customer Mobile</th>
+                                            <th>Address</th>
+                                            <th>Assign To</th>
+                                            <th>Status</th>
+                                            <th>Actions</th>
+                                        </thead>
+                                                <tbody>
+                                                <% today_orders.forEach(function(delevery) { %>
+                                            <tr>
+                                                <td><input type="checkbox" class="san_select" data-id="<%= delevery.assign_to %>" value="<%= delevery.Id[0] %>"></td>
+                                                <td><%= delevery.Id[0] %></td>
+                                                <td><%= delevery.Date %></td>
+                                                <td><%= delevery.BussinessName %></td>
+                                                <td><%= delevery.MobileNumber %></td>
+                                                <td><%= delevery.address %></td>
+                                                <td><%= delevery.assign_to %></td>
+                                                <td><%= delevery.Delivered %></td>
+                                                <td><%if (delevery.assign_to) { %> <button type="button" data-id="<%= delevery.Id[0] %>" class="btn btn-sm san_unassign">Unassign</button><% }else{ %><form action="/admin/assign_single_vehicle" id="assign_<%= delevery.Id[0] %>" method="get">
+                                    <input type="hidden" value="<%= delevery.Id[0] %>" name="order_id"><input type="hidden" value="" id="san_lat<%= delevery.Id[0] %>" name="san_lat"><input type="hidden" value="" id="san_lng<%= delevery.Id[0] %>" name="san_lng"><input type="hidden" value="" id="san_address<%= delevery.Id[0] %>" name="san_address"><input type="hidden" value="" id="san_color<%= delevery.Id[0] %>" name="san_color"><select class="form-control san_bangarh_vehicle" name="veh_name" data-title="<%= delevery.Id[0] %>">
+                                                  <option value = "" disabled selected>Select Vehicle</option>
+                                                  <% vehicles.forEach(function(type) { %>
+                                                  <option data-id="<%= type.lat %>san@#ban<%= type.lng %>san@#ban<%= type.address %>san@#ban<%= type.color %>" value = "<%= type.name %>"><%= type.name %></option>
+                                                  <% }); %>
+                                               </select></form><% } %>
+</td>
+                                            </tr>
+    <% }); %>
+                                                   
+                                                    
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <div class="tab-pane" id="settings">
+                                            <table class="table">
+                                            <thead class="text-warning">
+                                            <th>Select<br><input type="checkbox" class="san_select_all"></th>
+                                            <th>Order Id</th>
+                                            <th>Date</th>
+                                            <th>Customer Name</th>
+                                            <th>Customer Mobile</th>
+                                            <th>Address</th>
+                                            <th>Assign To</th>
+                                            <th>Status</th>
+                                            <th>Actions</th>
+                                        </thead>
+                                                <tbody>
+                                                <% coming_orders.forEach(function(delevery) { %>
+                                            <tr>
+                                                <td><input type="checkbox" class="" data-id="<%= delevery.assign_to %>" value="<%= delevery.Id[0] %>"></td>
+                                                <td><%= delevery.Id[0] %></td>
+                                                <td><%= delevery.Date %></td>
+                                                <td><%= delevery.BussinessName %></td>
+                                                <td><%= delevery.MobileNumber %></td>
+                                                <td><%= delevery.address %></td>
+                                                <td><%= delevery.assign_to %></td>
+                                                <td><%= delevery.Delivered %></td>
+                                                <td><%if (delevery.assign_to) { %> <button type="button" data-id="<%= delevery.Id[0] %>" class="btn btn-sm san_unassign">Unassign</button> <% }else{ %><form action="/admin/assign_single_vehicle" id="assign_<%= delevery.Id[0] %>" method="get">
+                                    <input type="hidden" value="<%= delevery.Id[0] %>" name="order_id"><input type="hidden" value="" id="san_lat<%= delevery.Id[0] %>" name="san_lat"><input type="hidden" value="" id="san_lng<%= delevery.Id[0] %>" name="san_lng"><input type="hidden" value="" id="san_address<%= delevery.Id[0] %>" name="san_address"><input type="hidden" value="" id="san_color<%= delevery.Id[0] %>" name="san_color"><select class="form-control san_bangarh_vehicle" name="veh_name" data-title="<%= delevery.Id[0] %>">
+                                                  <option value = "" disabled selected>Select Vehicle</option>
+                                                  <% vehicles.forEach(function(type) { %>
+                                                  <option data-id="<%= type.lat %>san@#ban<%= type.lng %>san@#ban<%= type.address %>" value = "<%= type.name %>"><%= type.name %></option>
+                                                  <% }); %>
+                                               </select></form><% } %></td>
+                                            </tr>
+    <% }); %>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                    <div class="col-lg-12 col-md-12">
+                        <div id="map"></div>
+                        <div id="right-panel">
+                          <p>Total Distance: <span id="total"></span></p>
+                          <p><span id="assigning_in_pro"></span></p>
+                        </div>
+                    <div>
+                    </div>
+                </div>
+            </div>
+            <script type="text/javascript">
+    $(document).ready(function() {
+        if('<%=san_available%>'){
+            $('#san_modellll').modal();
+        }
+
+        if('<%=exportdata%>'){
+            $('#san_export').modal();
+        }
+
+        //if('<%=invalid_addr%>'){
+        //    $('#san_modellll').modal();
+        ///}
+
+        
+
+
+        var send_btn = $('#send_btn').val();
+        if(send_btn ==0){
+            $('.send_divv').hide();
+        } 
+        var orderids = [];
+        $('#san_select_all').click(function() {
+            if ($(this).is(':checked')) {
+                $('.san_select').attr('checked', true);
+                $( ".san_select" ).each(function( index ) {
+                  orderids.push($(this).val());
+                });
+                
+            } else {
+                $('.san_select').attr('checked', false);
+                orderids = [];
+            }
+            $(".order_ids").val(orderids);
+        });
+
+        $('.san_select').click(function() {
+            var crnt = $(this).val();
+                if ($(this).is(':checked')) {
+                    orderids.push(crnt);
+                } else {
+                    orderids = jQuery.grep(orderids, function(value) {
+                      return value != crnt;
+                    });
+                }
+                $(".order_ids").val(orderids);
+        });
+
+        $('.san_unassign').click(function() {
+            var orderid = $(this).data('id');
+            $.ajax({
+                type:'POST',
+                url:'./clear_assigns',
+                data: { orderid:orderid },
+                dataType:'json'
+            }).done(function(data){
+                window.location.href="./home";
+            }).fail(function(jqXHR,textStatus, err){
+                console.log(textStatus);
+            });
+        });
+
+        
+
+        $('.assn_veh_id').click(function() {
+            var ids = $(".order_ids").val();
+            //var type = $(this).attr('id');
+            //var assigned = $(this).data('id');
+            //if(type == 'assign'){
+            //    if(assigned){
+            //        alert('Already Assigned!');
+            //        return false;
+            //    }
+            //}
+            if(!ids){
+                alert('Please select Orders');
+               return false;
+            }
+            $('#san_loading').fadeOut();
+        });
+
+        $('#export_to_csv').click(function() {
+            var ids = $(".order_ids").val();
+            //var type = $(this).attr('id');
+            //var assigned = $(this).data('id');
+            //if(type == 'assign'){
+            //    if(assigned){
+            //        alert('Already Assigned!');
+            //        return false;
+            //    }
+            //}
+            if(!ids){
+                alert('Please select Orders');
+               return false;
+            }
+            $('#san_loading').fadeOut();
+        });
+
+        $('.san_bangarh_vehicle').change(function() {
+            var id = $(this).data('title');
+            var latlng = $(this).find(':selected').data('id');
+            var lrtlngarr =latlng.split('san@#ban');
+            $("#san_lat"+id).val(lrtlngarr[0]);
+            $("#san_lng"+id).val(lrtlngarr[1]);
+            $("#san_address"+id).val(lrtlngarr[2]);
+            $("#san_color"+id).val(lrtlngarr[3]);
+            $('#assign_'+id).submit();
+        });
+
+        
+    });
+    function initMap() {
+        if($("#address_arr").val()){
+            var ltng_arr = JSON.parse($("#address_arr").val());
+                var map = new google.maps.Map(document.getElementById('map'), {
+              zoom: 4,
+              center: {lat: -31.9804702280387, lng: 115.797693925086},  // India.
+              travelMode: google.maps.TravelMode.DRIVING
+            });
+
+             var directionsService = new google.maps.DirectionsService;
+            var directionsDisplay = new google.maps.DirectionsRenderer({
+              draggable: true,
+              map: map,
+              panel: document.getElementById('right-panel')
+            });
+            var jsonarray = [];
+            var vehicless = [];
+            var groups = {};
+            for (var i = 0; i < ltng_arr.length; i++) {
+              var groupName = ltng_arr[i].assign_to;
+              if($.trim(groupName)){
+                  if (!groups[$.trim(groupName)]) {
+                    groups[groupName] = [];
+                  }
+                  groups[groupName].push(ltng_arr[i]);
+              }
+            }
+            var bounds = new google.maps.LatLngBounds();
+            jQuery.each(groups, function( index, value ) {
+              var wayponits = [];
+              var waypts = [];
+              var customers = [];
+              var rem_customers = [];
+              var limit_arr = [];
+              var rem_customerss = [];
+              var limit_arrr = [];
+              var vehicle_lat_lng = JSON.parse(value[parseInt(value.length)-1].veh_address);
+              var origin = vehicle_lat_lng.lat+','+vehicle_lat_lng.lon;
+              //var dest = vehicle_lat_lng.lat+','+vehicle_lat_lng.lon;
+              var dest = value[parseInt(value.length)-1].san_address; 
+              var color = value[parseInt(value.length)-1].color;
+              //value.splice(-1,1);
+              //&& i <= 24
+              for(var i=0;i<value.length;i++){
+                if(value[i] && waypts.indexOf(value[i].address) == -1 && i <= 20 && value[i].san_address && value[i].Latitude && value[i].Longitude){ console.log(value[i].Id[0]);
+                   waypts.push(value[i].address);
+                   wayponits.push({
+                       location: new window.google.maps.LatLng(value[i].Latitude, value[i].Longitude),
+                       stopover: true
+                   });
+                   customers.push(value[i]);
+                }
+                var end = value[i].BussinessName;
+                if(value[i] && waypts.indexOf(value[i].address) == -1 && i > 20 && i < 40 && value[i].san_address && value[i].Latitude && value[i].Longitude){ 
+                    waypts.push(value[i].address);
+                    limit_arr.push({
+                       location: new window.google.maps.LatLng(value[i].Latitude, value[i].Longitude),
+                       stopover: true
+                    });
+                    rem_customers.push(value[i]);
+                }
+                if(value[i] && waypts.indexOf(value[i].address) == -1 && i > 40 && value[i].san_address && value[i].Latitude && value[i].Longitude){
+                    waypts.push(value[i].address);
+                    limit_arrr.push({
+                       location: new window.google.maps.LatLng(value[i].Latitude, value[i].Longitude),
+                       stopover: true
+                    });
+                    rem_customerss.push(value[i]);
+                }
+              }
+              
+              displayRoute(origin, dest,directionsService,directionsDisplay,map,index,end,bounds,color,wayponits,customers,1);
+              setTimeout(function () {
+                    displayRoute(origin, dest,directionsService,directionsDisplay,map,index,end,bounds,color,limit_arr,rem_customers,22);
+              }, 1000);
+              setTimeout(function () {
+                    displayRoute(origin, dest,directionsService,directionsDisplay,map,index,end,bounds,color,limit_arrr,rem_customerss,42);
+              }, 2000);
+            });
+                map.fitBounds(bounds);
+        }
+    }
+    var vehicles = [];
+    var distances = [];
+//waypoints: [{location: 'Sector 17, Chandigarh'}],
+      function displayRoute(origin, destination, service, display, map,start,end,bounds,color,wayponits,customers,cus_cnt) { 
+          if(wayponits.length > 0 ){
+                service.route({
+                  origin: origin,
+                  destination: destination,
+                  waypoints: wayponits,
+                  optimizeWaypoints: true,
+                  travelMode: 'DRIVING'
+                }, function(response, status) {
+                  if (status === 'OK') { 
+                      var dirDisplay = new google.maps.DirectionsRenderer({
+                         draggable: true,
+                         map: map,
+                         suppressMarkers : true,
+                         polylineOptions: {
+                           strokeColor: color
+                         }
+                      });
+                      //dirDisplay.addListener('directions_changed', function() {
+                      //  computeTotalDistance(dirDisplay.getDirections());
+                     // });
+                      dirDisplay.setDirections(response);
+                      //var pointsArray = response.routes[0].overview_path;
+                      var legs = response.routes[ 0 ].legs;
+                      if(vehicles.indexOf(start) == -1){
+                        createMarker(legs[0].start_location, start+'(Vehicle)',map,bounds,'','');
+                        vehicles.push(start);
+                      }
+                      var orders = response.routes[0].waypoint_order;
+                      console.log(orders);
+                     var markerCounter = cus_cnt;
+                     for (var i = 0; i < legs.length; i++) {
+                          var orlat = legs[i].end_location.lat();
+                          var orlng = legs[i].end_location.lng();
+                         //for(var j=0;j<customers.length;j++){
+                           //if(customers[j].Latitude == orlat){
+                                //var bname = customers[i].BussinessName || customers[j].CafeName;
+                                createMarker(legs[i].end_location, legs[i].end_address,map,bounds,markerCounter++,color);
+                           //}
+                         //}
+                     }
+                     
+                  } else {
+                        
+                  }
+                });
+          }
+      }
+
+      function sanGetWayPoints(request,map,start,id,origin,dest){
+      		 var service = new google.maps.places.PlacesService(map);
+			  service.getDetails(request, function(place, status) {
+			    if (status == google.maps.places.PlacesServiceStatus.OK) {
+			        $.ajax({
+		                type:'POST',
+		                url:'./save_routes',
+		                data: { orderid:id, start:origin,end:dest,veh_name:start},
+		                dataType:'json'
+		            }).done(function(data){
+		                //window.location.href="./home";
+		            }).fail(function(jqXHR,textStatus, err){
+		                console.log(textStatus);
+		            });
+			    }
+			  });
+      }
+
+      function computeTotalDistance(result) {
+        var total = 0;
+        var myroute = result.routes[0];
+        for (var i = 0; i < myroute.legs.length; i++) {
+          total += myroute.legs[i].distance.value;
+        }
+        total = total / 1000;
+        document.getElementById('total').innerHTML = total + ' km';
+      }
+
+      function createMarker(latlng, title, map,bounds,cnt=1,color) {
+            var infowindow = new google.maps.InfoWindow();
+            var san_icon = '';
+            if (title.indexOf("(Vehicle)") >= 0){
+                san_icon = 'http://work4brands.com/route-opt/uploads/delivery-truck.png';
+            }else{
+                color = colourNameToHex(color); 
+                color = color.replace("#", "");
+                san_icon = 'data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2238%22%20height%3D%2238%22%20viewBox%3D%220%200%2038%2038%22%3E%3Cpath%20fill%3D%22%23808080%22%20stroke%3D%22%23ccc%22%20stroke-width%3D%22.5%22%20d%3D%22M34.305%2016.234c0%208.83-15.148%2019.158-15.148%2019.158S3.507%2025.065%203.507%2016.1c0-8.505%206.894-14.304%2015.4-14.304%208.504%200%2015.398%205.933%2015.398%2014.438z%22%2F%3E%3Ctext%20transform%3D%22translate%2819%2018.5%29%22%20fill%3D%22%23fff%22%20style%3D%22font-family%3A%20Arial%2C%20sans-serif%3Bfont-weight%3Abold%3Btext-align%3Acenter%3B%22%20font-size%3D%2212%22%20text-anchor%3D%22middle%22%3E' + cnt + '%3C%2Ftext%3E%3C%2Fsvg%3E';
+                san_icon = 'http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=' + cnt + '|'+color;
+            }
+            if(latlng.lat && latlng.lng && title != null){
+                var marker = new google.maps.Marker({
+                    position: latlng,
+                    title: title,
+                    draggable: true,
+                    map: map,
+                    icon: san_icon
+                });
+                infowindow.setContent(title);
+                if (title.indexOf("(Vehicle)") >= 0){
+                    infowindow.open(map, marker);
+                }
+                marker.addListener('click', function() {
+                    infowindow.open(map, marker);
+                });
+            }
+           //bounds.extend(position);
+           
+        }
+
+       function colourNameToHex(colour)
+        {
+            var colours = {"aliceblue":"#f0f8ff","antiquewhite":"#faebd7","aqua":"#00ffff","aquamarine":"#7fffd4","azure":"#f0ffff",
+            "beige":"#f5f5dc","bisque":"#ffe4c4","black":"#000000","blanchedalmond":"#ffebcd","blue":"#0000ff","blueviolet":"#8a2be2","brown":"#a52a2a","burlywood":"#deb887",
+            "cadetblue":"#5f9ea0","chartreuse":"#7fff00","chocolate":"#d2691e","coral":"#ff7f50","cornflowerblue":"#6495ed","cornsilk":"#fff8dc","crimson":"#dc143c","cyan":"#00ffff",
+            "darkblue":"#00008b","darkcyan":"#008b8b","darkgoldenrod":"#b8860b","darkgray":"#a9a9a9","darkgreen":"#006400","darkkhaki":"#bdb76b","darkmagenta":"#8b008b","darkolivegreen":"#556b2f",
+            "darkorange":"#ff8c00","darkorchid":"#9932cc","darkred":"#8b0000","darksalmon":"#e9967a","darkseagreen":"#8fbc8f","darkslateblue":"#483d8b","darkslategray":"#2f4f4f","darkturquoise":"#00ced1",
+            "darkviolet":"#9400d3","deeppink":"#ff1493","deepskyblue":"#00bfff","dimgray":"#696969","dodgerblue":"#1e90ff",
+            "firebrick":"#b22222","floralwhite":"#fffaf0","forestgreen":"#228b22","fuchsia":"#ff00ff",
+            "gainsboro":"#dcdcdc","ghostwhite":"#f8f8ff","gold":"#ffd700","goldenrod":"#daa520","gray":"#808080","green":"#008000","greenyellow":"#adff2f",
+            "honeydew":"#f0fff0","hotpink":"#ff69b4",
+            "indianred ":"#cd5c5c","indigo":"#4b0082","ivory":"#fffff0","khaki":"#f0e68c",
+            "lavender":"#e6e6fa","lavenderblush":"#fff0f5","lawngreen":"#7cfc00","lemonchiffon":"#fffacd","lightblue":"#add8e6","lightcoral":"#f08080","lightcyan":"#e0ffff","lightgoldenrodyellow":"#fafad2",
+            "lightgrey":"#d3d3d3","lightgreen":"#90ee90","lightpink":"#ffb6c1","lightsalmon":"#ffa07a","lightseagreen":"#20b2aa","lightskyblue":"#87cefa","lightslategray":"#778899","lightsteelblue":"#b0c4de",
+            "lightyellow":"#ffffe0","lime":"#00ff00","limegreen":"#32cd32","linen":"#faf0e6",
+            "magenta":"#ff00ff","maroon":"#800000","mediumaquamarine":"#66cdaa","mediumblue":"#0000cd","mediumorchid":"#ba55d3","mediumpurple":"#9370d8","mediumseagreen":"#3cb371","mediumslateblue":"#7b68ee",
+            "mediumspringgreen":"#00fa9a","mediumturquoise":"#48d1cc","mediumvioletred":"#c71585","midnightblue":"#191970","mintcream":"#f5fffa","mistyrose":"#ffe4e1","moccasin":"#ffe4b5",
+            "navajowhite":"#ffdead","navy":"#000080",
+            "oldlace":"#fdf5e6","olive":"#808000","olivedrab":"#6b8e23","orange":"#ffa500","orangered":"#ff4500","orchid":"#da70d6",
+            "palegoldenrod":"#eee8aa","palegreen":"#98fb98","paleturquoise":"#afeeee","palevioletred":"#d87093","papayawhip":"#ffefd5","peachpuff":"#ffdab9","peru":"#cd853f","pink":"#ffc0cb","plum":"#dda0dd","powderblue":"#b0e0e6","purple":"#800080",
+            "rebeccapurple":"#663399","red":"#ff0000","rosybrown":"#bc8f8f","royalblue":"#4169e1",
+            "saddlebrown":"#8b4513","salmon":"#fa8072","sandybrown":"#f4a460","seagreen":"#2e8b57","seashell":"#fff5ee","sienna":"#a0522d","silver":"#c0c0c0","skyblue":"#87ceeb","slateblue":"#6a5acd","slategray":"#708090","snow":"#fffafa","springgreen":"#00ff7f","steelblue":"#4682b4",
+            "tan":"#d2b48c","teal":"#008080","thistle":"#d8bfd8","tomato":"#ff6347","turquoise":"#40e0d0",
+            "violet":"#ee82ee",
+            "wheat":"#f5deb3","white":"#ffffff","whitesmoke":"#f5f5f5",
+            "yellow":"#ffff00","yellowgreen":"#9acd32"};
+
+            if (typeof colours[colour.toLowerCase()] != 'undefined')
+                return colours[colour.toLowerCase()].toUpperCase();
+
+            return false;
+        }
+
+</script>
+            

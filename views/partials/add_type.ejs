@@ -1,0 +1,214 @@
+<% include ./head %>
+<div class="content">
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-md-12">
+                <div class="card san_card">
+                    <div class="header">
+                        <h4 class="title"><%if (edit_detail.id) { %>Edit Vehicle Type<% }else{ %>Add Vehicle Type<% } %></h4>
+                    </div>
+                    <div class="content">
+                        <form action="/admin/add_type" method="post" id="eventForm">
+                        <%if (edit_detail.id) { %>
+                            <input type="hidden" name="edit_id" value="<%=edit_detail.id%>">
+                            <% } %>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group label-floating">
+                                        <label class="control-label">Vehicle Type</label>
+                                                <input type="text" class="form-control" name="name" value="<%=edit_detail.name%>"/>
+                                                </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group label-floating">
+                                        <label class="control-label">Capacity</label>
+                                                <input type="text" class="form-control" name="capacity" value="<%=edit_detail.capacity%>"/>
+                                                </div>
+                                </div>
+                                <input type="hidden" name="available" id="available_data" value="<%=edit_detail.available%>">
+                                
+                            </div>
+                            <div class="row">
+                            <div class="col-lg-7">
+                                    <div class="form-group label-floating">
+                                        <label for="exampleInputEmail1" style="padding: 18px;">Available</label>
+                                            <div class="btn-group" id="san_avl_btn">
+                                                            <label class="san_enable btn btn-primary z-index-1 click_to_avl"  uib-btn-radio="Yes">Yes</label>
+                                                            <label class="san_disable btn btn-primary z-index-1 click_to_avl" uib-btn-radio="No">No</label>
+                                                        </div>
+                                         <div class="btn-group margin-top-10" id="san_avl_btns" >
+                                                                <label class="btn btn-success z-index-1 active day_type" uib-btn-checkbox="">Sun</label>
+                                                                <label class="btn btn-success z-index-1 active day_type">Mon</label>
+                                                                <label class="btn btn-success z-index-1 active day_type">Tue</label>
+                                                                <label class="btn btn-success z-index-1 active day_type">Wed</label>
+                                                                <label class="btn btn-success z-index-1 active day_type">Thu</label>
+                                                                <label class="btn btn-success z-index-1 active day_type">Fri</label>
+                                                                <label class="btn btn-success z-index-1 active day_type">Sat</label>
+                                                            </div>
+                                    </div>
+                                </div>
+                                
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label class="first_shift" style="font-size: 25px;">First Shift</label>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="second_shift" style="font-size: 25px;">Second Shift</label>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <p id="datepairExample">
+                                        <input type="text" class="time start" id="available_from" name="available_from" value="<%=edit_detail.available_from%>"/> to
+                                        <input type="text" class="time end" id="available_to" name="available_to" value="<%=edit_detail.available_to%>"/>
+                                    </p>
+                                </div>
+
+                                <div class="col-md-6">
+                                   <p id="datepairExamplee">
+                                        <input type="text" class="time start" id="available_from" name="s_available_from" value="<%=edit_detail.s_available_from%>"/> to
+                                        <input type="text" class="time end" id="available_to" name="s_available_to" value="<%=edit_detail.s_available_to%>"/>
+                                    </p>
+                                </div>
+                                
+                            </div>
+                            <button type="submit" class="btn btn-info btn-fill pull-right">Save</button>
+                            <div class="clearfix"></div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+		</div>
+                 <div class="row">
+                        <div class="col-lg-12 col-md-12">
+                            <div class="card">
+                                <div class="card-header" data-background-color="orange">
+                                    <h4 class="title">All Vehicles</h4>
+                                    <!-- <p class="category">New employees on 15th September, 2016</p> -->
+                                </div>
+                                <div class="card-content table-responsive">
+                                    <table class="table table-hover">
+                                        <thead class="text-warning">
+                                            <th>Name</th>
+                                            <th>Capacity</th>
+                                            <th>Available From</th>
+                                            <th>Available To</th>
+                                            <th>Actions</th>
+                                        </thead>
+                                        <tbody>
+                                        <% vehicle_types.forEach(function(vehicle) { %>
+                                            <tr>
+                                                <td><%= vehicle.type_name %></td>
+                                                <td><%= vehicle.capacity %></td>
+                                                <td><%= vehicle.available_from %></td>
+                                                <td><%= vehicle.available_to %></td>
+                                                <td><a href="<%  %>types?edit_id=<%=vehicle.id%>">Edit</a>&nbsp&nbsp&nbsp&nbsp&nbsp<a href="<%  %>types?del_id=<%=vehicle.id%>">Delete</a></td>
+                                            </tr>
+    <% }); %>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+	</div>
+</div>
+<% include ./footer %>
+<script>
+  $(document).ready(function() {
+    $('#datepairExample .start').timepicker({
+        'showDuration': true,
+        timeFormat: 'h:mm p',
+        interval: 30,
+        defaultTime: '<%=edit_detail.available_from%>',
+        dynamic: false,
+        dropdown: true,
+        scrollbar: true
+    });
+    $('#datepairExample .end').timepicker({
+        'showDuration': true,
+        timeFormat: 'h:mm p',
+        interval: 30,
+        defaultTime: '<%=edit_detail.available_to%>',
+        dynamic: false,
+        dropdown: true,
+        scrollbar: true
+    });
+    var datePairElement = document.getElementById('datepairExample');
+    var datepair = new Datepair(datePairElement);
+    $('#datepairExamplee .start').timepicker({
+        timeFormat: 'h:mm p',
+        interval: 30,
+        defaultTime: '<%=edit_detail.s_available_from%>',
+        dynamic: false,
+        dropdown: true,
+        scrollbar: true
+    });
+    $('#datepairExamplee .end').timepicker({
+        timeFormat: 'h:mm p',
+        interval: 30,
+        defaultTime: '<%=edit_detail.s_available_to%>',
+        dynamic: false,
+        dropdown: true,
+        scrollbar: true
+    });
+    var datePairElementt = document.getElementById('datepairExamplee');
+    var datepair = new Datepair(datePairElementt);
+
+
+
+        $( ".click_to_avl" ).on( "click", function() {
+            var val = $(this).attr('uib-btn-radio');
+            if (val =='Yes') { 
+            $(this).css("background-color", "#2732b0");
+            $('.san_disable').css("background-color", "#9c27b0");
+                $('#san_avl_btns').show();
+            }else if (val =='No') {
+            $(this).css("background-color", "#2732b0");
+            $('.san_enable').css("background-color", "#9c27b0");
+                $('#san_avl_btns').hide();
+            }
+        });
+        $( ".day_type" ).on( "click", function() {
+           var IS_JSON = true;
+           try
+           {
+                   var avaialable_days = JSON.parse($("#available_data").val());
+           }
+           catch(err)
+           {
+                   var avaialable_days = [];
+           }  
+            if(avaialable_days.length <= 0){
+                var avaialable_days = [];
+            } 
+            var found = $.inArray($( this ).text(), avaialable_days);
+            var bodyColor = $(this).css("background-color");
+            if(bodyColor == 'rgb(76, 175, 80)' && found < 0){
+                $(this).css("background-color", "#2732b0");
+                avaialable_days.push($( this ).text());
+            }else{
+                $(this).css("background-color", "#4caf50");
+                avaialable_days.splice(found, 1);
+            }
+            console.log(avaialable_days);
+            $("#available_data").val(JSON.stringify(avaialable_days));
+        });
+  });
+  </script>
+  <%if (edit_detail.available != '') { %>
+    <script>
+      $(document).ready(function() {
+            $( ".san_enable" ).css("background-color", "#2732b0");
+            $('#san_avl_btns').show();
+            var savedays = JSON.parse($("#available_data").val());
+            $(".day_type").each(function(index) {
+            console.log(jQuery.inArray( $( this ).text(), savedays ));
+                if (jQuery.inArray( $( this ).text(), savedays ) >= 0) {
+                    $(this).css("background-color", "#2732b0");
+                }
+            });
+      });
+    </script>
+  <% } %>

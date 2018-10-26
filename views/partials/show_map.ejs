@@ -1,0 +1,137 @@
+<% include ./head %>
+<div class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card san_card">
+                    <div class="header">
+                        <h4 class="title"><%if (edit_detail.id) { %>Edit Vehicle Type<% }else{ %>Add Vehicle Type<% } %></h4>
+                    </div>
+                    <div class="content">
+                        <form action="/admin/add_type" method="post" id="eventForm">
+                        <%if (edit_detail.id) { %>
+                            <input type="hidden" name="edit_id" value="<%=edit_detail.id%>">
+                            <% } %>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group label-floating">
+                                        <label class="control-label">Vehicle Type</label>
+                                                <input type="text" class="form-control" name="name" value="<%=edit_detail.name%>"/>
+                                                </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group label-floating">
+                                        <label class="control-label">Capacity</label>
+                                                <input type="text" class="form-control" name="capacity" value="<%=edit_detail.capacity%>"/>
+                                                </div>
+                                </div>
+                                <input type="hidden" name="available" id="available_data" value="<%=edit_detail.available%>">
+                                
+                            </div>
+                            <div class="row">
+                            <div class="col-lg-7">
+                                    <div class="form-group label-floating">
+                                        <label for="exampleInputEmail1" style="padding: 18px;">Available</label>
+                                            <div class="btn-group" id="san_avl_btn">
+                                                            <label class="san_enable btn btn-primary z-index-1 click_to_avl"  uib-btn-radio="Yes">Yes</label>
+                                                            <label class="san_disable btn btn-primary z-index-1 click_to_avl" uib-btn-radio="No">No</label>
+                                                        </div>
+                                         <div class="btn-group margin-top-10" id="san_avl_btns" >
+                                                                <label class="btn btn-success z-index-1 active day_type" uib-btn-checkbox="">Sun</label>
+                                                                <label class="btn btn-success z-index-1 active day_type">Mon</label>
+                                                                <label class="btn btn-success z-index-1 active day_type">Tue</label>
+                                                                <label class="btn btn-success z-index-1 active day_type">Wed</label>
+                                                                <label class="btn btn-success z-index-1 active day_type">Thu</label>
+                                                                <label class="btn btn-success z-index-1 active day_type">Fri</label>
+                                                                <label class="btn btn-success z-index-1 active day_type">Sat</label>
+                                                            </div>
+                                    </div>
+                                </div>
+                                
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group label-floating">
+                                        <label class="control-label">Availabe From</label>
+                                                <input type="text" class="form-control timepicker" id="available_from" name="available_from" value="<%=edit_detail.available_from%>"/>
+                                                </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="form-group label-floating">
+                                        <label class="control-label">Available Till</label>
+                                                <input type="text" class="form-control timepicker" name="available_to" value="<%=edit_detail.available_to%>"/>
+                                                </div>
+                                </div>
+                                
+                            </div>
+        
+                            <button type="submit" class="btn btn-info btn-fill pull-right">Save</button>
+                            <div class="clearfix"></div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<% include ./footer %>
+<script>
+  $(document).ready(function() {
+        $('.timepicker').timepicker({
+            showInputs: true
+        });
+        $( ".click_to_avl" ).on( "click", function() {
+            var val = $(this).attr('uib-btn-radio');
+            if (val =='Yes') { 
+            $(this).css("background-color", "#2732b0");
+            $('.san_disable').css("background-color", "#9c27b0");
+                $('#san_avl_btns').show();
+            }else if (val =='No') {
+            $(this).css("background-color", "#2732b0");
+            $('.san_enable').css("background-color", "#9c27b0");
+                $('#san_avl_btns').hide();
+            }
+        });
+        $( ".day_type" ).on( "click", function() {
+           var IS_JSON = true;
+           try
+           {
+                   var avaialable_days = JSON.parse($("#available_data").val());
+           }
+           catch(err)
+           {
+                   var avaialable_days = [];
+           }  
+            if(avaialable_days.length <= 0){
+                var avaialable_days = [];
+            } 
+            var found = $.inArray($( this ).text(), avaialable_days);
+            var bodyColor = $(this).css("background-color");
+            if(bodyColor == 'rgb(76, 175, 80)' && found < 0){
+                $(this).css("background-color", "#2732b0");
+                avaialable_days.push($( this ).text());
+            }else{
+                $(this).css("background-color", "#4caf50");
+                avaialable_days.splice(found, 1);
+            }
+            console.log(avaialable_days);
+            $("#available_data").val(JSON.stringify(avaialable_days));
+        });
+  });
+  </script>
+  <%if (edit_detail.available != '') { %>
+    <script>
+      $(document).ready(function() {
+            $( ".san_enable" ).css("background-color", "#2732b0");
+            $('#san_avl_btns').show();
+            var savedays = JSON.parse($("#available_data").val());
+            $(".day_type").each(function(index) {
+            console.log(jQuery.inArray( $( this ).text(), savedays ));
+                if (jQuery.inArray( $( this ).text(), savedays ) >= 0) {
+                    $(this).css("background-color", "#2732b0");
+                }
+            });
+      });
+    </script>
+  <% } %>
